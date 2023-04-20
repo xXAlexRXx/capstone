@@ -3,8 +3,8 @@ import pygame #import pygame library
 import RPi.GPIO as GPIO #import GPIO library
 import time #import time library
 import os #import os library
-import sounddevice as sd
-import wavio as wv
+import sounddevice as sd #import sounddevice library
+import wavio as wv #import wavio library
 
 pygame.init() #initialize pygame
 
@@ -61,46 +61,46 @@ custom = ["/home/alex/Desktop/github/capstone/gpio-music-box/CustomSounds/custom
           "/home/alex/Desktop/github/capstone/gpio-music-box/CustomSounds/custom11.wav",
           "/home/alex/Desktop/github/capstone/gpio-music-box/CustomSounds/custom12.wav"]
 
-btnPressed = [True, True, True, True, True, True, True, True, True, True, True, True]
-pin=[21,20,16,26,19,13,6,12,0,7,8,11]
-GPIO.setmode(GPIO.BCM)
-for i in range(0, 12):
-    GPIO.setup(pin[i], GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
-swch_pos1 = (9)
+btnPressed = [True, True, True, True, True, True, True, True, True, True, True, True] #Set button pressed as a boolean set to true for each button
+pin=[21,20,16,26,19,13,6,12,0,7,8,11] #Set the pins for each button
+GPIO.setmode(GPIO.BCM) #Set the code to read the pin numbering
+for i in range(0, 12): #Set the range of buttons from 0-12
+    GPIO.setup(pin[i], GPIO.IN, pull_up_down=GPIO.PUD_UP) #Set the button pins as pull up, activated upon pull down
+#Set the 3 position switch pins
+swch_pos1 = (9) 
 swch_pos3 = (10)
-
+#Set the mode and record button pins
 btn_mode = (23)
 btn_rec = (24)
-
+#Set the mode and record LED pins
 mode_LED = (18) 
 rec_LED = (22)
-
+#Set frequency, duration, and update boolean
 freq = 44100
 duration = 5
 update = True
 
-
+#Set  3 position switch pins as pull up, activated upon pull down
 GPIO.setup(9, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(10, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
+#Set mode and record button pins as pull up, activated upon pull down
 GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
+#Set mode and record LED pins as outputs
 GPIO.setup(18, GPIO.OUT)
 GPIO.setup(22, GPIO.OUT)
 
-def record(fileNo):
+def record(fileNo): #Define the parameters of the recording
     print("Now recording...")
     recording = sd.rec(int(duration*freq), samplerate = freq, channels=2)
     sd.wait()
     print("Done recording...")
     wv.write("/home/alex/Desktop/github/capstone/gpio-music-box/CustomSounds/custom%d.wav" %fileNo, recording, freq, sampwidth = 2)
     #os.system("arecord /home/alex/Desktop/github/capstone/gpio-music-box/CustomSounds/custom%d.wav -D plughw:CARD=1 -f cd -d 5 &" %fileNo)
-
+#Turn off LEDs upon startup
 GPIO.output(18,0)
 GPIO.output(22,0)
-
+#Show value of each pin (0 is active, 1 is inactive)
 print("switch pos1: " + str(GPIO.input(swch_pos1)))
 print("switch pos3: " + str(GPIO.input(swch_pos3)))
 print("Mode Btn: " + str(GPIO.input(btn_mode)))
@@ -108,52 +108,52 @@ print("Record Btn: " + str(GPIO.input(btn_rec)))
 
 while 1:
     if GPIO.input(swch_pos1) == 0 and GPIO.input(swch_pos3) == 1 and GPIO.input(btn_mode) == 1 and GPIO.input(btn_rec) == 1:#Check that position switch is in position 1
-        GPIO.output(18,0)
-        GPIO.output(22,0)
-        print("switch pos1: " + str(GPIO.input(swch_pos1)))
-        print("switch pos3: " + str(GPIO.input(swch_pos3)))
-        time.sleep(0.15)
-        for i in range(0,12):
-            btnPressed[i] = GPIO.input(pin[i])
-            if btnPressed[i] == False:
-                pygame.mixer.Sound(octave3[i]).play()               
+        GPIO.output(18,0) #Turn off LED
+        GPIO.output(22,0) #Turn off LED
+        print("switch pos1: " + str(GPIO.input(swch_pos1))) #print position 1 value
+        print("switch pos3: " + str(GPIO.input(swch_pos3))) #print position 3 value
+        time.sleep(0.15) #150ms delay
+        for i in range(0,12): #Set the range of buttons from 0-12
+            btnPressed[i] = GPIO.input(pin[i]) #Set btnPressed boolean based on value of pressed button (0 = active, 1 = inactive)
+            if btnPressed[i] == False: #Check if button is pressed
+                pygame.mixer.Sound(octave3[i]).play() #play certain sound based on button pressed               
     elif GPIO.input(swch_pos1) == 1 and GPIO.input(swch_pos3) == 1 and GPIO.input(btn_mode) == 1 and GPIO.input(btn_rec) == 1: #Check that position switch is in position 2
-        GPIO.output(18,0)
-        GPIO.output(22,0)
-        print("switch pos1: " + str(GPIO.input(swch_pos1)))
-        print("switch pos3: " + str(GPIO.input(swch_pos3)))
-        time.sleep(0.15)
-        for i in range(0,12):
-            btnPressed[i] = GPIO.input(pin[i])
+        GPIO.output(18,0) #Turn off LED
+        GPIO.output(22,0) #Turn off LED
+        print("switch pos1: " + str(GPIO.input(swch_pos1))) #print position 1 value
+        print("switch pos3: " + str(GPIO.input(swch_pos3))) #print position 3 value
+        time.sleep(0.15) #150ms delay
+        for i in range(0,12): #Set the range of buttons from 0-12
+            btnPressed[i] = GPIO.input(pin[i]) #Set btnPressed boolean based on value of pressed button (0 = active, 1 = inactive)
             if btnPressed[i] == False:
-                sound =pygame.mixer.Sound(octave4[i]).play() 
+                sound =pygame.mixer.Sound(octave4[i]).play() #play certain sound based on button pressed
     elif GPIO.input(swch_pos1) == 1 and GPIO.input(swch_pos3) == 0 and GPIO.input(btn_mode) == 1 and GPIO.input(btn_rec) == 1: #Check that position switch is in position 3
-        GPIO.output(18,0)
-        GPIO.output(22,0)
-        print("switch pos1: " + str(GPIO.input(swch_pos1)))
-        print("switch pos3: " + str(GPIO.input(swch_pos3)))
-        time.sleep(0.15)
-        for i in range(0,12):
-            btnPressed[i] = GPIO.input(pin[i])
-            if btnPressed[i] == False:
-                pygame.mixer.Sound(octave5[i]).play()       
+        GPIO.output(18,0) #Turn off LED
+        GPIO.output(22,0) #Turn off LED
+        print("switch pos1: " + str(GPIO.input(swch_pos1))) #print position 1 value
+        print("switch pos3: " + str(GPIO.input(swch_pos3))) #print position 3 value
+        time.sleep(0.15) #150ms delay
+        for i in range(0,12):  #Set the range of buttons from 0-12
+            btnPressed[i] = GPIO.input(pin[i]) #Set btnPressed boolean based on value of pressed button (0 = active, 1 = inactive)
+            if btnPressed[i] == False: #Set the range of buttons from 0-12
+                pygame.mixer.Sound(octave5[i]).play() #play certain sound based on button pressed       
     if GPIO.input(btn_mode) == 0 and GPIO.input(btn_rec) == 0:
-        GPIO.output(18,1)
-        GPIO.output(22,1)
-        print("Mode Btn: " + str(GPIO.input(btn_mode)))
-        print("Record Btn: " + str(GPIO.input(btn_rec)))
-        time.sleep(0.15)
-        for i in range(0,12):
-            btnPressed[i] = GPIO.input(pin[i])
+        GPIO.output(18,1) #Turn on LED
+        GPIO.output(22,1) #Turn on LED
+        print("Mode Btn: " + str(GPIO.input(btn_mode))) #print position of mode button (0 is active, 1 is inactive)
+        print("Record Btn: " + str(GPIO.input(btn_rec))) #print position of record button (0 is active, 1 is inactive)
+        time.sleep(0.15) #150ms delay
+        for i in range(0,12): #Set the range of buttons from 0-12
+            btnPressed[i] = GPIO.input(pin[i]) #Set btnPressed boolean based on value of pressed button (0 = active, 1 = inactive)
             if btnPressed[i] == False:
-                record(i+1) #filenames are index+1            
+                record(i+1) #filenames are index+1, record sounds based of button pressed under the parameters of the record definition            
     elif GPIO.input(btn_mode) == 0 and GPIO.input(btn_rec) == 1:
-        GPIO.output(18,1)
-        GPIO.output(22,0)
-        print("Mode Btn: " + str(GPIO.input(btn_mode)))
-        print("Record Btn: " + str(GPIO.input(btn_rec)))
-        time.sleep(0.15)
-        for i in range(0,12):
-            btnPressed[i] = GPIO.input(pin[i])
+        GPIO.output(18,1) #Turn on LED
+        GPIO.output(22,0) #Turn off LED
+        print("Mode Btn: " + str(GPIO.input(btn_mode))) #print position of mode button (0 is active, 1 is inactive)
+        print("Record Btn: " + str(GPIO.input(btn_rec))) #print position of record button (0 is active, 1 is inactive)
+        time.sleep(0.15) #150ms delay
+        for i in range(0,12): #Set the range of buttons from 0-12
+            btnPressed[i] = GPIO.input(pin[i]) #Set btnPressed boolean based on value of pressed button (0 = active, 1 = inactive
             if btnPressed[i] == False:
-                pygame.mixer.Sound(custom[i]).play()
+                pygame.mixer.Sound(custom[i]).play() #Play custom sound based on button pressed
