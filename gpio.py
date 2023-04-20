@@ -135,6 +135,7 @@ while 1:
             btnPressed[i] = GPIO.input(pin[i]) #Set btnPressed boolean based on value of pressed button (0 = active, 1 = inactive)
             if btnPressed[i] == False: #Set the range of buttons from 0-12
                 pygame.mixer.Sound(octave5[i]).play() #play certain sound based on button pressed       
+           
     if GPIO.input(btn_mode) == 0 and GPIO.input(btn_rec) == 0:
         GPIO.output(18,1) #Turn on LED
         GPIO.output(22,1) #Turn on LED
