@@ -1,8 +1,6 @@
-from gpiozero import Button #import button library
 import pygame #import pygame library
 import RPi.GPIO as GPIO #import GPIO library
 import time #import time library
-import os #import os library
 import sounddevice as sd #import sounddevice library
 import wavio as wv #import wavio library
 
